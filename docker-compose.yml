@@ -1,17 +1,28 @@
 services:
   api:
     image: ghcr.io/christ-leycene/task-manager-api:prod
+    container_name: devops-task-manager-api-1
     ports:
       - "3000:3000"
+    volumes:
+      - .:/app
     depends_on:
       - db
-    environment:
-      - MONGO_URL=mongodb://db:27017/tasksdb
+    networks:
+      - lab5-net
 
   db:
-    image: mongo:6
+    image: mongo:latest
+    container_name: devops-task-manager-db-1
+    restart: always
     volumes:
-      - mongo_data:/data/db
+      - ./mongo_data:/data/db
+    networks:
+      - lab5-net
+
+networks:
+  lab5-net:
+    driver: bridge
 
 volumes:
   mongo_data:

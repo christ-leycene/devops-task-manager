@@ -1,34 +1,28 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 
-// Données temporaires (en mémoire)
-let tasks = [
-  { id: 1, title: "Learn Git", completed: false },
-  { id: 2, title: "Practice DevOps", completed: true }
-];
+// On définit le Schéma et le Modèle directement ici
+const Task = mongoose.model('Task', new mongoose.Schema({
+  title: String,
+  completed: Boolean
+}));
 
 // GET /tasks
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+  const tasks = await Task.find();
   res.json(tasks);
 });
 
 // POST /tasks
-router.post('/', (req, res) => {
-  const { title, completed } = req.body;
-
-  // Vérification simple
-  if (!title) {
-    return res.status(400).json({ error: "Title is required" });
+router.post('/', async (req, res) => {
+  try {
+    const newTask = new Task(req.body);
+    const savedTask = await newTask.save();
+    res.status(201).json(savedTask);
+  } catch (err) {
+    res.status(400).json({ error: "Erreur enregistrement" });
   }
-
-  const newTask = {
-    id: tasks.length + 1,
-    title: title,
-    completed: completed || false
-  };
-
-  tasks.push(newTask);
-  res.status(201).json(newTask);
 });
 
 module.exports = router;
