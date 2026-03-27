@@ -14,7 +14,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 app.get('/', (req, res) => {
-  res.json({ message: "🚀 API running on port 3000" });
+  res.json({ message: "Task Manager API running" });
 });
 
 app.use('/tasks', taskRoutes);
